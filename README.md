@@ -33,14 +33,14 @@ Here’s how to use the OTP input component in your React app.
 1. **Import the OTP input component:**
 
 ```tsx
-import { OtpInput } from "multiple-otp-field";
+import OtpInput from "multiple-otp-field";
 ```
 
 2. **Use the component in your app:**
 
 ```tsx
 import React from "react";
-import { OtpInput } from "multiple-otp-field";
+import OtpInput from "multiple-otp-field";
 
 const App: React.FC = () => {
   const handleOtpSubmit = (otp: string) => {
@@ -74,7 +74,7 @@ The `OtpInput` component accepts the following props:
 
 ```tsx
 import React from "react";
-import { OtpInput } from "multiple-otp-field";
+import OtpInput from "multiple-otp-field";
 import "./App.scss"; // Include your custom SCSS file
 
 const App: React.FC = () => {
