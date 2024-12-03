@@ -7,6 +7,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
   onOtpSubmit = () => {},
   inputClassName = "otpInput",
   containerClassName = "otpContainer",
+  ...inputProps
 }) => {
   const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -74,6 +75,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
           onClick={() => handleClick(index)}
           onKeyDown={(e) => handleKeyDown(index, e)}
           className={inputClassName}
+          {...inputProps}
         />
       ))}
     </div>
