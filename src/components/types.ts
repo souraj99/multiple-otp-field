@@ -3,6 +3,7 @@ export interface OtpInputProps {
   onOtpSubmit?: (otp: string) => void;
   inputClassName?: string;
   containerClassName?: string;
+  disabled?: boolean;
 }
 
 /**

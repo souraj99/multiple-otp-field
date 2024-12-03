@@ -7,16 +7,17 @@ const OtpInput: React.FC<OtpInputProps> = ({
   onOtpSubmit = () => {},
   inputClassName = "otpInput",
   containerClassName = "otpContainer",
+  disabled = false,
   ...inputProps
 }) => {
   const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    if (inputRefs.current[0]) {
+    if (inputRefs.current[0] && !disabled) {
       inputRefs.current[0].focus();
     }
-  }, []);
+  }, [disabled]);
 
   const handleChange = (
     index: number,
@@ -58,10 +59,15 @@ const OtpInput: React.FC<OtpInputProps> = ({
     index: number,
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
+    if (disabled) return;
     if (event.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
+
+  useEffect(() => {
+    onOtpSubmit(otp.join(""));
+  }, [otp, onOtpSubmit]);
 
   return (
     <div className={containerClassName}>
@@ -75,6 +81,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
           onClick={() => handleClick(index)}
           onKeyDown={(e) => handleKeyDown(index, e)}
           className={inputClassName}
+          disabled={disabled}
           {...inputProps}
         />
       ))}
