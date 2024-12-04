@@ -83,6 +83,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
           className={inputClassName}
           disabled={disabled}
           {...inputProps}
+          inputMode="numeric"
         />
       ))}
     </div>
