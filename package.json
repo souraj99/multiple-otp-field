@@ -1,6 +1,6 @@
 {
   "name": "multiple-otp-field",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "A dynamic, reusable OTP input component for React with SCSS support.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
