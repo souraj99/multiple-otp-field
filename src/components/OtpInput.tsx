@@ -4,14 +4,12 @@ import React, {
   useState,
   forwardRef,
   useImperativeHandle,
+  useCallback,
 } from "react";
-import { OtpInputProps } from "./types";
+import { OtpInputProps, OtpInputRef } from "./types";
 import "./OtpInput.css";
 
-const OtpInput = forwardRef<
-  { reset: () => void }, // Ref type: the object with the reset method
-  OtpInputProps
->(
+const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
   (
     {
       length = 4,
@@ -24,7 +22,7 @@ const OtpInput = forwardRef<
     ref
   ) => {
     const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
-    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+    const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
     useEffect(() => {
       if (inputRefs.current[0] && !disabled) {
@@ -37,7 +35,6 @@ const OtpInput = forwardRef<
       event: React.ChangeEvent<HTMLInputElement>
     ) => {
       const value = event.target.value;
-
       if (isNaN(Number(value))) return;
 
       const newOtp = [...otp];
@@ -51,9 +48,7 @@ const OtpInput = forwardRef<
 
       if (value && index < length - 1) {
         inputRefs.current[index + 1]?.focus();
-      }
-
-      if (!value && index > 0) {
+      } else if (!value && index > 0) {
         inputRefs.current[index - 1]?.focus();
       }
     };
@@ -78,10 +73,10 @@ const OtpInput = forwardRef<
       }
     };
 
-    const handleReset = () => {
+    const handleReset = useCallback(() => {
       setOtp(Array(length).fill(""));
-      inputRefs.current[0]?.focus(); 
-    };
+      inputRefs.current[0]?.focus();
+    }, [length]);
 
     useImperativeHandle(ref, () => ({
       reset: handleReset,

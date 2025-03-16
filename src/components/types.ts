@@ -1,17 +1,41 @@
 export interface OtpInputProps {
+  /**
+   * The number of OTP digits (input fields).
+   * @default 4
+   */
   length?: number;
+
+  /**
+   * Callback function that is triggered when the full OTP is entered.
+   * Receives the complete OTP as a string.
+   */
   onOtpSubmit?: (otp: string) => void;
+
+  /**
+   * CSS class name for individual OTP input fields.
+   * @default "otpInput"
+   */
   inputClassName?: string;
+
+  /**
+   * CSS class name for the container wrapping all OTP input fields.
+   * @default "otpContainer"
+   */
   containerClassName?: string;
+
+  /**
+   * If true, disables all OTP input fields.
+   * @default false
+   */
   disabled?: boolean;
 }
 
 /**
- * OtpInput component for rendering a customizable OTP (One-Time Password) input field.
- * @param props - The properties passed to the component.
- * @param props.length - The number of OTP digits. Defaults to 4.
- * @param props.onOtpSubmit - Callback function called when all OTP digits are filled. Receives the complete OTP as a string.
- * @param props.inputClassName - CSS class name for individual input fields. Defaults to "otpInput".
- * @param props.containerClassName - CSS class name for the container div. Defaults to "otpContainer".
- * @returns A React component that renders an OTP input field.
+ * Ref type for OtpInput component, exposing methods to interact with it.
  */
+export interface OtpInputRef {
+  /**
+   * Resets the OTP input fields to an empty state.
+   */
+  reset: () => void;
+}
