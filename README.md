@@ -12,6 +12,7 @@ A customizable and responsive OTP (One-Time Password) input component for React.
 - **Fully responsive and adaptable to various screen sizes**
 - **Prevents non-numeric input**
 - **Disables input fields when needed**
+- **Auto paste support** – automatically fills all fields when pasting an OTP code
 
 ## Installation
 

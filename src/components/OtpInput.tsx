@@ -73,6 +73,38 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
       }
     };
 
+    const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+      if (disabled) return;
+      event.preventDefault();
+
+      const pastedData = event.clipboardData.getData("text/plain").trim();
+      // Filter only numeric characters
+      const numericData = pastedData.replace(/\D/g, "");
+
+      if (numericData.length === 0) return;
+
+      const newOtp = [...otp];
+      const pastedChars = numericData.slice(0, length).split("");
+
+      pastedChars.forEach((char, idx) => {
+        if (idx < length) {
+          newOtp[idx] = char;
+        }
+      });
+
+      setOtp(newOtp);
+
+      // Focus on the next empty field or the last field
+      const nextEmptyIndex = newOtp.findIndex((val) => !val);
+      const focusIndex = nextEmptyIndex === -1 ? length - 1 : nextEmptyIndex;
+      inputRefs.current[focusIndex]?.focus();
+
+      const combinedOtp = newOtp.join("");
+      if (combinedOtp.length === length) {
+        onOtpSubmit(combinedOtp);
+      }
+    };
+
     const handleReset = useCallback(() => {
       setOtp(Array(length).fill(""));
       inputRefs.current[0]?.focus();
@@ -97,6 +129,7 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
             onChange={(e) => handleChange(index, e)}
             onClick={() => handleClick(index)}
             onKeyDown={(e) => handleKeyDown(index, e)}
+            onPaste={handlePaste}
             className={inputClassName}
             disabled={disabled}
             {...inputProps}
