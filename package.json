@@ -30,7 +30,7 @@
   "repository": {
     "author": "Souraj Ghosh",
     "type": "git",
-    "url": "https://github.com/souraj99/multiple-otp-field.git"
+    "url": "git+https://github.com/souraj99/multiple-otp-field.git"
   },
   "keywords": [
     "react",
