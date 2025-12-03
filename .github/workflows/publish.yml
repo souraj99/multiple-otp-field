@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # Required for OIDC Trusted Publishing
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -20,9 +20,14 @@ jobs:
           node-version: 22
           registry-url: "https://registry.npmjs.org"
 
-      - run: npm ci
+      # Use npm install instead of npm ci to get platform-specific binaries
+      - name: Install dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
 
-      - run: npm run build
+      - name: Build
+        run: npm run build
 
-      # No NPM_TOKEN needed – npm will use OIDC automatically
-      - run: npm publish --provenance --access public
+      - name: Publish to npm
+        run: npm publish --provenance --access public
