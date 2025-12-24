@@ -28,6 +28,11 @@ export interface OtpInputProps {
    * @default false
    */
   disabled?: boolean;
+  /**
+   * Placeholder value for each OTP input field.
+   * @default ""
+   */
+  placeholderValue?: string;
 }
 
 /**

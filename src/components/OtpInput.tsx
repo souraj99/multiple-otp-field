@@ -17,6 +17,7 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
       inputClassName = "otpInput",
       containerClassName = "otpContainer",
       disabled = false,
+      placeholderValue = "",
       ...inputProps
     },
     ref
@@ -134,6 +135,7 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
             disabled={disabled}
             {...inputProps}
             inputMode="numeric"
+            placeholder=""
           />
         ))}
       </div>

@@ -1,6 +1,6 @@
 {
   "name": "multiple-otp-field",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A dynamic, reusable OTP input component for React with ts and SCSS support.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "release": "git tag v$(node -p \"require('./package.json').version\") && git push origin v$(node -p \"require('./package.json').version\")"
   },
-  "author": "",
+  "author": "Souraj Ghosh",
   "license": "ISC",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
@@ -44,7 +44,6 @@
   ],
   "dependencies": {
     "@types/uuid": "^10.0.0",
-    "react-icons": "^5.2.1",
     "uuid": "^10.0.0"
   }
 }
