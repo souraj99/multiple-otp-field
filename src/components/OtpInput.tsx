@@ -126,7 +126,7 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
             key={index}
             type="text"
             ref={(input) => (inputRefs.current[index] = input)}
-            value={value}
+            value={value || undefined}
             onChange={(e) => handleChange(index, e)}
             onClick={() => handleClick(index)}
             onKeyDown={(e) => handleKeyDown(index, e)}
