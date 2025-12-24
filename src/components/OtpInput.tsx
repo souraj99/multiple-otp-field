@@ -135,7 +135,7 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
             disabled={disabled}
             {...inputProps}
             inputMode="numeric"
-            placeholder=""
+            placeholder={placeholderValue}
           />
         ))}
       </div>
