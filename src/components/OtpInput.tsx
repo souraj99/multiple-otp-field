@@ -24,6 +24,8 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
   ) => {
     const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+    const abortControllerRef = useRef<AbortController | null>(null);
+    const isPastingRef = useRef<boolean>(false);
 
     useEffect(() => {
       if (inputRefs.current[0] && !disabled) {
@@ -31,11 +33,102 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
       }
     }, [disabled]);
 
+    // Web OTP API for automatic OTP detection from SMS
+    useEffect(() => {
+      if (disabled || typeof window === "undefined") return;
+
+      const ac = new AbortController();
+      abortControllerRef.current = ac;
+
+      // Check if Web OTP API is available
+      if ("OTPCredential" in window) {
+        navigator.credentials
+          .get({
+            // @ts-ignore - OTPCredential might not be in all TypeScript definitions
+            otp: { transport: ["sms"] },
+            signal: ac.signal,
+          })
+          .then((credential: any) => {
+            if (credential && credential.code) {
+              const code = credential.code;
+              const numericData = code.replace(/\D/g, "");
+              if (numericData.length > 0) {
+                const newOtp = Array(length).fill("");
+                const pastedChars = numericData.slice(0, length).split("");
+                pastedChars.forEach((char: string, idx: number) => {
+                  if (idx < length) {
+                    newOtp[idx] = char;
+                  }
+                });
+                setOtp(newOtp);
+
+                // Focus last input or next empty
+                const nextEmptyIndex = newOtp.findIndex((val) => !val);
+                const focusIndex =
+                  nextEmptyIndex === -1 ? length - 1 : nextEmptyIndex;
+                inputRefs.current[focusIndex]?.focus();
+
+                const combinedOtp = newOtp.join("");
+                if (combinedOtp.length === length) {
+                  onOtpSubmit(combinedOtp);
+                }
+              }
+            }
+          })
+          .catch((err: Error) => {
+            // Ignore abort errors and when API is not available
+            if (err.name !== "AbortError") {
+              console.log("Web OTP API error:", err);
+            }
+          });
+      }
+
+      return () => {
+        ac.abort();
+        abortControllerRef.current = null;
+      };
+    }, [disabled, length, onOtpSubmit]);
+
     const handleChange = (
       index: number,
       event: React.ChangeEvent<HTMLInputElement>
     ) => {
+      // Skip if we're in the middle of a paste operation
+      if (isPastingRef.current) {
+        return;
+      }
+
       const value = event.target.value;
+
+      // Handle paste operation with multiple characters
+      if (value.length > 1) {
+        const numericData = value.replace(/\D/g, "");
+        if (numericData.length === 0) return;
+
+        const newOtp = [...otp];
+        const chars = numericData.slice(0, length - index).split("");
+
+        chars.forEach((char: string, idx: number) => {
+          if (index + idx < length) {
+            newOtp[index + idx] = char;
+          }
+        });
+
+        setOtp(newOtp);
+
+        // Focus on the next empty field or the last field
+        const nextEmptyIndex = newOtp.findIndex((val) => !val);
+        const focusIndex = nextEmptyIndex === -1 ? length - 1 : nextEmptyIndex;
+        inputRefs.current[focusIndex]?.focus();
+
+        const combinedOtp = newOtp.join("");
+        if (combinedOtp.length === length) {
+          onOtpSubmit(combinedOtp);
+        }
+        return;
+      }
+
+      // Handle single character input
       if (isNaN(Number(value))) return;
 
       const newOtp = [...otp];
@@ -84,10 +177,14 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
 
       if (numericData.length === 0) return;
 
-      const newOtp = [...otp];
+      // Set flag to prevent handleChange from interfering
+      isPastingRef.current = true;
+
+      // Start from the beginning for complete OTP paste
+      const newOtp = Array(length).fill("");
       const pastedChars = numericData.slice(0, length).split("");
 
-      pastedChars.forEach((char, idx) => {
+      pastedChars.forEach((char: string, idx: number) => {
         if (idx < length) {
           newOtp[idx] = char;
         }
@@ -98,7 +195,12 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
       // Focus on the next empty field or the last field
       const nextEmptyIndex = newOtp.findIndex((val) => !val);
       const focusIndex = nextEmptyIndex === -1 ? length - 1 : nextEmptyIndex;
-      inputRefs.current[focusIndex]?.focus();
+
+      // Use setTimeout to ensure state update completes before resetting flag
+      setTimeout(() => {
+        inputRefs.current[focusIndex]?.focus();
+        isPastingRef.current = false;
+      }, 0);
 
       const combinedOtp = newOtp.join("");
       if (combinedOtp.length === length) {
@@ -135,6 +237,7 @@ const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(
             disabled={disabled}
             {...inputProps}
             inputMode="numeric"
+            autoComplete={index === 0 ? "one-time-code" : "off"}
             placeholder={placeholderValue}
           />
         ))}
